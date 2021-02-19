@@ -36,7 +36,3 @@ def requestSmardData(
     df = pd.read_csv(StringIO(data.text), sep=';')
     
     return df
-
-
-df = requestSmardData()
-print(df)
