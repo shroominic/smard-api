@@ -1,5 +1,3 @@
-import smard_api as smard
-
 ### ModulIDs ###
 
 # power generation 
@@ -16,5 +14,40 @@ WHOLESALE_PRICES             = [8004169,8004170,8000252,8000253,8000251,8000254,
 COMMERCIAL_FOREIGN_TRADE     = [8004169,8004170,8000252,8000253,8000251,8000254,8000255,8000256,8000257,8000258,8000259,8000260,8000261,8000262]
 PHYSICAL_POWER_FLOW          = [31000714,31000140,31000569,31000145,31000574,31000570,31000139,31000568,31000138,31000567,31000146,31000575,31000144,31000573,31000142,31000571,31000143,31000572,31000141]
 
-df = smard.requestSmardData(modulIDs=REALIZED_POWER_CONSUMPTION)
+import smard_api as smard
+import pandas as pd
+import time 
+
+def last_valid_value(list):
+    nnlist = []
+    for i in list:
+        if(i != "-"):
+            nnlist.append(i)
+    return float(nnlist[-1])
+
+def getCurrentGreenEnergyPercentage(realized_power_generation):
+    erneuerbar = ['Biomasse[MWh]', 'Wasserkraft[MWh]',
+       'Wind Offshore[MWh]', 'Wind Onshore[MWh]', 'Photovoltaik[MWh]',
+       'Sonstige Erneuerbare[MWh]']
+    konventionell = ['Kernenergie[MWh]', 'Braunkohle[MWh]',
+       'Steinkohle[MWh]', 'Erdgas[MWh]', 'Pumpspeicher[MWh]',
+       'Sonstige Konventionelle[MWh]']
+    e_power_gen = 0.0
+    k_power_gen = 0.0
+    
+    for e in erneuerbar:
+        e_power_gen = e_power_gen + last_valid_value(realized_power_generation[e])
+        
+    for k in konventionell:     
+        k_power_gen = k_power_gen + last_valid_value(realized_power_generation[k])
+        
+    return e_power_gen/(e_power_gen + k_power_gen)
+
+
+modules = REALIZED_POWER_GENERATION
+
+df = smard.requestSmardData(modulIDs=modules, timestamp_from_in_milliseconds = (int(time.time()) * 1000) - (24*3600)*1000)
+
 print(df)
+
+print("\nCurrentGreenEnergyPercentage: " + str(getCurrentGreenEnergyPercentage(df)))

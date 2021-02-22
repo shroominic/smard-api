@@ -6,9 +6,9 @@ from io import StringIO
 timestamp = int(time.time()) * 1000
 
 # request smard data with default values
-def requestSmardData(
+def requestSmardData (
     modulIDs = [8004169], 
-    timestamp_from_in_milliseconds = (int(time.time()) * 1000) - (4*3600)*1000, 
+    timestamp_from_in_milliseconds = (int(time.time()) * 1000) - (3*3600)*1000, 
     timestamp_to_in_milliseconds   = (int(time.time()) * 1000),
     region   = "DE",
     language = "de",
